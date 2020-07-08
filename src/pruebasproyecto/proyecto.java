@@ -107,12 +107,12 @@ public class proyecto {
 	static int[] codigo_Linea_Manchester(int[] palabra_completa_bin,char[] codigo_linea_manchester_arr) {
 		for(int i=0;i<palabra_completa_bin.length;i++) {
 			if(palabra_completa_bin[i]==0) {
-				System.out.println("Nivel bajo en la posicion "+i);
+				System.out.println("Nivel bajo en la posicion " +i);
 				palabra_completa_bin[i]=-1;
 				codigo_linea_manchester_arr[i]='b';
 			}
 			else {
-				System.out.println("Nivel alto en la posicion "+i);
+				System.out.println("Nivel alto en la posicion " +i);
 				codigo_linea_manchester_arr[i]='a';
 			}
 		}
@@ -133,10 +133,10 @@ public class proyecto {
 		//
 
 
-		while(j<arr_manchester.length) {
+		while(j<i) { //Intercambiar por i
 
 			if(arr_manchester[j+aleatorios[i]] == (-1)) {
-				System.out.println("Habia un -1, introducimos un 1 en la posicion" + (j+aleatorios[i]));
+				System.out.println("Habia un -1, introducimos un 1 en la posicion " + (j+aleatorios[i]));
 				arr_manchester[j+aleatorios[i]]=1;
 			}
 			else {
