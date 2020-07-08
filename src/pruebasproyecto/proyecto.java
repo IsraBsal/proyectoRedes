@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Random;
 
 public class proyecto {
 
@@ -16,7 +17,23 @@ public class proyecto {
 		System.out.println(); 
 	} 
 
-	// calculating value of redundant bits 
+	static void imprimearr(int arr[]) {
+		for(int i=0;i<arr.length;i++) {
+			System.out.print(arr[i]);
+		}
+		System.out.println();
+	}
+
+	static void imprimearr2(char arr[]) {
+		for(int i=0;i<arr.length;i++) {
+			System.out.print(arr[i]);
+		}
+		System.out.println();
+	}
+
+	//Termina impresion de arreglos 
+
+	// calcula el valor de los bits redundantes
 	static int[] calculation(int[] ar, int r) 
 	{ 
 		for (int i = 0; i < r; i++) { 
@@ -34,6 +51,7 @@ public class proyecto {
 		return ar; 
 	} 
 
+	//Genera el codigo hamming
 	static int[] generateCode(String str, int M, int r) 
 	{ 
 		int[] ar = new int[r + M + 1]; 
@@ -42,12 +60,6 @@ public class proyecto {
 			if ((Math.ceil(Math.log(i) / Math.log(2)) 
 					- Math.floor(Math.log(i) / Math.log(2))) 
 					== 0) { 
-
-				// if i == 2^n for n in (0, 1, 2, .....) 
-				// then ar[i]=0 
-				// codeword[i] = 0 ---- 
-				// redundant bits are initialized 
-				// with value 0 
 				ar[i] = 0; 
 			} 
 			else { 
@@ -76,20 +88,69 @@ public class proyecto {
 	static String convertirBinario(String s) {
 
 		byte[] bytes = s.getBytes();
-		StringBuilder binary = new StringBuilder();
+		StringBuilder binario = new StringBuilder();
 		for (byte b : bytes)
 		{
 			int val = b;
 			for (int i = 0; i < 8; i++)
 			{
-				binary.append((val & 128) == 0 ? 0 : 1);
+				binario.append((val & 128) == 0 ? 0 : 1);
 				val <<= 1;
 			}
-			binary.append(' ');
+			binario.append(' ');
 		}
-		System.out.println("'" + s + "' to binary:" + binary);
-		return binary.toString();
+		System.out.println("'" + s + "' a binario:" + binario);
+		return binario.toString();
 	}
+
+	static int[] codigo_Linea_Manchester(int[] palabra_completa_bin,char[] codigo_linea_manchester_arr) {
+		for(int i=0;i<palabra_completa_bin.length;i++) {
+			if(palabra_completa_bin[i]==0) {
+				System.out.println("Nivel bajo en la posicion "+i);
+				palabra_completa_bin[i]=-1;
+				codigo_linea_manchester_arr[i]='b';
+			}
+			else {
+				System.out.println("Nivel alto en la posicion "+i);
+				codigo_linea_manchester_arr[i]='a';
+			}
+		}
+		return palabra_completa_bin;
+	}
+
+	static void ruido(int[] arr_manchester,int[] aleatorios) {
+		int j=0;
+		int i=0;
+		//Lleno el arreglo de aleatorios
+		for(int z=0;z<aleatorios.length;z++) {
+			Random r = new Random(); 
+			int resultado = (int) (r.nextFloat() * (23 - 0) + 0);
+			System.out.println("Soy el random " +resultado+ " En la posicion del arreglo aleatorios "+z);
+			aleatorios[z]= resultado;
+		}
+
+		//
+
+
+		while(j<arr_manchester.length) {
+
+			if(arr_manchester[j+aleatorios[i]] == (-1)) {
+				System.out.println("Habia un -1, introducimos un 1 en la posicion" + (j+aleatorios[i]));
+				arr_manchester[j+aleatorios[i]]=1;
+			}
+			else {
+				System.out.println("Habia un 1, introducimos un -1 en la posicion " + ( j + aleatorios[i]) );
+				arr_manchester[j+aleatorios[i]] = (-1) ;
+			}
+
+
+			j=j+24;
+			i=i+1;
+		}
+		System.out.println();
+	}
+
+
 
 	// Driver code 
 	public static void main(String[] args) throws FileNotFoundException, IOException 
@@ -97,18 +158,17 @@ public class proyecto {
 		int indice_arreglo=0;
 		int a=0;
 		int contador_while=0;
-		//Empieza mi codigo
+
 		char[] palabra = leeArchivo("C:\\Users\\is_ga\\git\\crc-practica4\\src\\ArchivoTxt\\hola.txt" );
 		char[] palabra_de1=new char[1]; //Areglo usado para tomar solo 1 letras de la palabra original del txt
 		int b=12*palabra.length;
 		int[] palabra_completa_bin=new int[b];
+		char[] codigo_linea_manchester_arr=new char[b];
 
 		//Para checar el arreglo
-		System.out.println("Descomponiendo el txt en un arreglo de char");
-		for  (int x=0; x<palabra.length; x++) {
-			System.out.print(palabra[x]);
-			System.out.println();
-		}
+		System.out.println("Descomponiendo el txt en un arreglo de char, este sera el mensaje a transmitir");
+		imprimearr2(palabra);
+		System.out.println();
 		//Termina
 
 		while(indice_arreglo<palabra.length) {
@@ -121,15 +181,6 @@ public class proyecto {
 
 			String datastream = String.valueOf(palabra_de1);
 			System.out.println("Palabra a transmitir:"+datastream);
-
-
-
-
-
-			//Variables del codigo original
-
-			//			String str= datastream;
-			//			System.out.println("to string= "+str);
 			String str=convertirBinario(datastream);
 			str=str.substring(0, 8);
 			System.out.println("Longitud del binario "+str.length());
@@ -143,7 +194,7 @@ public class proyecto {
 			} 
 			int[] ar = generateCode(str, M, r); //ar es el arreglo que contiene la palabra
 
-			System.out.println("Generated hamming code "); 
+			System.out.println("Generando el codigo de hamming "); 
 			ar = calculation(ar, r); 
 			imprime(ar);
 
@@ -164,11 +215,36 @@ public class proyecto {
 			contador_while++;
 
 		}
+
+
 		System.out.println("Palabra completa despues de hamming");
-		imprime(palabra_completa_bin);
+		imprimearr(palabra_completa_bin);
+		//imprime(palabra_completa_bin);
+		//		for(int i=0;i<palabra_completa_bin.length;i++) {
+		//			System.out.print(palabra_completa_bin[i]);
+		//		}
+		System.out.println();
 		System.out.println("Longitud = "+palabra_completa_bin.length);
+		System.out.println();
 
+		//Comienza codigo de linea
 
+		System.out.println("Codigo de linea manchester");
+		int[] palabra_completa_bin_manchester=codigo_Linea_Manchester(palabra_completa_bin,codigo_linea_manchester_arr);
+		imprimearr(palabra_completa_bin_manchester);
+		System.out.println();
+		imprimearr2(codigo_linea_manchester_arr);
+		//		for(int i=0;i<palabra_completa_bin_manchester.length;i++) {
+		//			System.out.print(palabra_completa_bin_manchester[i]);
+		//		}
+		System.out.println();
+		System.out.println("Introducimos ruido");
+		int tam= palabra_completa_bin_manchester.length/24;
+		System.out.println(tam);
+		int[] aleatorios=new int[tam];
+		ruido(palabra_completa_bin_manchester, aleatorios);
+		System.out.println("Palabra con ruido");
+		imprimearr(palabra_completa_bin_manchester);
 
 
 
