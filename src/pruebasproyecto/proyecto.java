@@ -29,6 +29,7 @@ public class proyecto {
 			System.out.print(arr[i]);
 		}
 		System.out.println();
+		//Nuevo
 	}
 
 	//Termina impresion de arreglos 
