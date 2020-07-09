@@ -130,7 +130,7 @@ public class proyecto {
 			aleatorios[z]= resultado;
 		}
 
-		//
+
 
 
 		while(j<i) { //Intercambiar por i
@@ -180,6 +180,7 @@ public class proyecto {
 				indice_arreglo++;
 			}
 
+			//Comienza la codificacion Haming-----------------------------------------------------------// 
 			String datastream = String.valueOf(palabra_de1);
 			System.out.println("Palabra a transmitir:"+datastream);
 			String str=convertirBinario(datastream);
@@ -199,7 +200,7 @@ public class proyecto {
 			ar = calculation(ar, r); 
 			imprime(ar);
 
-			//Comienza a construirse el arreglo que contiene tod
+			//Comienza a construirse el arreglo que contiene toda la palabra
 			if(contador_while==0) {
 				for(int i=0;i<palabra_completa_bin.length;i++) {
 					palabra_completa_bin[i]=0;
@@ -220,24 +221,18 @@ public class proyecto {
 
 		System.out.println("Palabra completa despues de hamming");
 		imprimearr(palabra_completa_bin);
-		//imprime(palabra_completa_bin);
-		//		for(int i=0;i<palabra_completa_bin.length;i++) {
-		//			System.out.print(palabra_completa_bin[i]);
-		//		}
 		System.out.println();
 		System.out.println("Longitud = "+palabra_completa_bin.length);
 		System.out.println();
+		//Termina la codificacion Hamming----------------------------------------------// 
 
-		//Comienza codigo de linea
+		//Comienza codigo de linea------------------------------------------------------//
 
 		System.out.println("Codigo de linea manchester");
 		int[] palabra_completa_bin_manchester=codigo_Linea_Manchester(palabra_completa_bin,codigo_linea_manchester_arr);
 		imprimearr(palabra_completa_bin_manchester);
 		System.out.println();
 		imprimearr2(codigo_linea_manchester_arr);
-		//		for(int i=0;i<palabra_completa_bin_manchester.length;i++) {
-		//			System.out.print(palabra_completa_bin_manchester[i]);
-		//		}
 		System.out.println();
 		System.out.println("Introducimos ruido");
 		int tam= palabra_completa_bin_manchester.length/24;
@@ -247,6 +242,7 @@ public class proyecto {
 		System.out.println("Palabra con ruido");
 		imprimearr(palabra_completa_bin_manchester);
 
+		//Termina codigo de linea--------------------------------------------------------//
 
 
 		//Termina mi codigo
