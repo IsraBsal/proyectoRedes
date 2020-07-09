@@ -151,6 +151,7 @@ public class proyecto {
 
 	static void decodifica_Manchester(int[] arr_manchester,char[] cod_lin_manchester,int errores[]) {
 		int pos_error=0;
+		//decodificacion 
 		for(int i=0;i<arr_manchester.length;i++) {
 			if(arr_manchester[i]==(-1)) {
 				if(cod_lin_manchester[i]!='b') {
@@ -256,13 +257,15 @@ public class proyecto {
 		//Termina la codificacion Hamming----------------------------------------------// 
 
 		//Comienza codigo de linea------------------------------------------------------//
-
 		System.out.println("Codigo de linea manchester");
 		int[] palabra_completa_bin_manchester=codigo_Linea_Manchester(palabra_completa_bin,codigo_linea_manchester_arr);
 		imprimearr(palabra_completa_bin_manchester);
 		System.out.println();
 		imprimearr2(codigo_linea_manchester_arr);
 		System.out.println();
+		//Termina codigo de linea manchester------------------------------------//////////
+
+		//Introducimos ruido-------------------------------------------/
 		System.out.println("Introducimos ruido");
 		int tam= palabra_completa_bin_manchester.length/24;
 		System.out.println(tam);
@@ -270,13 +273,14 @@ public class proyecto {
 		ruido(palabra_completa_bin_manchester, aleatorios);
 		System.out.println("Palabra con ruido");
 		imprimearr(palabra_completa_bin_manchester);
+		//Termina ruido----------------------------------------------------/
+
+		//Decodificamos manchester---------------------------------------------/
 		System.out.println("Decodificamos manchester con ruido");
 		int[] pos_errores=new int[aleatorios.length];
 		decodifica_Manchester(palabra_completa_bin_manchester, codigo_linea_manchester_arr, pos_errores);
 		imprimearr(palabra_completa_bin_manchester);
-
-
-		//Termina codigo de linea--------------------------------------------------------//
+		//Termina codificacion manchester--------------------------------------------------------//
 
 
 		//Termina mi codigo
