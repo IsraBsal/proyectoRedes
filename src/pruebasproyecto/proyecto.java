@@ -172,6 +172,7 @@ public class proyecto {
 		System.out.println();
 		//Termina
 
+		//Comienza la codificacion Haming-----------------------------------------------------------// 
 		while(indice_arreglo<palabra.length) {
 
 			for(int j=0;j<1;j++) {
@@ -180,7 +181,7 @@ public class proyecto {
 				indice_arreglo++;
 			}
 
-			//Comienza la codificacion Haming-----------------------------------------------------------// 
+
 			String datastream = String.valueOf(palabra_de1);
 			System.out.println("Palabra a transmitir:"+datastream);
 			String str=convertirBinario(datastream);
