@@ -119,7 +119,7 @@ public class proyecto {
 		return palabra_completa_bin;
 	}
 
-	static void ruido(int[] arr_manchester,int[] aleatorios) {
+	static void ruido(int[] arr_manchester,int[] aleatorios) { //Funcion que introduce ruido cada 24 bits 
 		int j=0;
 		int i=0;
 		//Lleno el arreglo de aleatorios
@@ -130,11 +130,11 @@ public class proyecto {
 			aleatorios[z]= resultado;
 		}
 
-
-
-
-		while(j<i) { //Intercambiar por i
-
+		while(j<arr_manchester.length) { //Intercambiar por i
+			System.out.println("Valor de J=" +j);
+			if(i==aleatorios.length) {
+				return;
+			}
 			if(arr_manchester[j+aleatorios[i]] == (-1)) {
 				System.out.println("Habia un -1, introducimos un 1 en la posicion " + (j+aleatorios[i]));
 				arr_manchester[j+aleatorios[i]]=1;
@@ -143,10 +143,38 @@ public class proyecto {
 				System.out.println("Habia un 1, introducimos un -1 en la posicion " + ( j + aleatorios[i]) );
 				arr_manchester[j+aleatorios[i]] = (-1) ;
 			}
-
-
 			j=j+24;
 			i=i+1;
+		}
+		System.out.println();
+	}
+
+	static void decodifica_Manchester(int[] arr_manchester,char[] cod_lin_manchester,int errores[]) {
+		int pos_error=0;
+		for(int i=0;i<arr_manchester.length;i++) {
+			if(arr_manchester[i]==(-1)) {
+				if(cod_lin_manchester[i]!='b') {
+					System.out.println("Error en la posicion " +i+ " Es un nivel alto y hay un nivel bajo");
+					errores[pos_error]=i;
+					pos_error++;
+					arr_manchester[i]=0;
+				}
+				else {
+					arr_manchester[i]=0;
+				}
+
+			}
+			else {
+				if(cod_lin_manchester[i]!='a') {
+					System.out.println("Error en la posicion " + i +  " Es un nivel bajo y hay un nivel alto");
+					errores[pos_error]=i;
+					pos_error++;
+					arr_manchester[i]=1;
+				}
+				else {
+					arr_manchester[i]=1;
+				}
+			}
 		}
 		System.out.println();
 	}
@@ -160,7 +188,7 @@ public class proyecto {
 		int a=0;
 		int contador_while=0;
 
-		char[] palabra = leeArchivo("C:\\Users\\is_ga\\git\\crc-practica4\\src\\ArchivoTxt\\hola.txt" );
+		char[] palabra = leeArchivo("C:\\Users\\is_ga\\Documents\\hola.txt" );
 		char[] palabra_de1=new char[1]; //Areglo usado para tomar solo 1 letras de la palabra original del txt
 		int b=12*palabra.length;
 		int[] palabra_completa_bin=new int[b];
@@ -242,6 +270,11 @@ public class proyecto {
 		ruido(palabra_completa_bin_manchester, aleatorios);
 		System.out.println("Palabra con ruido");
 		imprimearr(palabra_completa_bin_manchester);
+		System.out.println("Decodificamos manchester con ruido");
+		int[] pos_errores=new int[aleatorios.length];
+		decodifica_Manchester(palabra_completa_bin_manchester, codigo_linea_manchester_arr, pos_errores);
+		imprimearr(palabra_completa_bin_manchester);
+
 
 		//Termina codigo de linea--------------------------------------------------------//
 
