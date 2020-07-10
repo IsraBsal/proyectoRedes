@@ -4,7 +4,10 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Random;
+
+import org.xml.sax.helpers.ParserFactory;
 
 public class proyecto {
 
@@ -31,47 +34,56 @@ public class proyecto {
 		System.out.println();
 		//Nuevo
 	}
-
 	//Termina impresion de arreglos 
 
-	// calcula el valor de los bits redundantes
-	static int[] calculation(int[] ar, int r) 
-	{ 
-		for (int i = 0; i < r; i++) { 
-			int x = (int)Math.pow(2, i); 
-			for (int j = 1; j < ar.length; j++) { 
-				if (((j >> i) & 1) == 1) { 
-					if (x != j) 
-						ar[x] = ar[x] ^ ar[j]; 
-				} 
-			} 
-			System.out.println("r" + x + " = "
-					+ ar[x]); 
-		} 
+	//Convertir la cadena a array
+	static int[] parse(String num){
+		int[] arr = new int[num.length()];
+		for(int i=0; i<num.length(); i++){
+			arr[i] = Character.getNumericValue(num.charAt(i));
+		}
+		return arr;
+	}
 
-		return ar; 
-	} 
+
+	//	// calcula el valor de los bits redundantes
+	//	static int[] calculation(int[] ar, int r) 
+	//	{ 
+	//		for (int i = 0; i < r; i++) { 
+	//			int x = (int)Math.pow(2, i); 
+	//			for (int j = 1; j < ar.length; j++) { 
+	//				if (((j >> i) & 1) == 1) { 
+	//					if (x != j) 
+	//						ar[x] = ar[x] ^ ar[j]; 
+	//				} 
+	//			} 
+	//			System.out.println("r" + x + " = "
+	//					+ ar[x]); 
+	//		} 
+	//
+	//		return ar; 
+	//	} 
 
 	//Genera el codigo hamming
-	static int[] generateCode(String str, int M, int r) 
-	{ 
-		int[] ar = new int[r + M + 1]; 
-		int j = 0; 
-		for (int i = 1; i < ar.length; i++) { 
-			if ((Math.ceil(Math.log(i) / Math.log(2)) 
-					- Math.floor(Math.log(i) / Math.log(2))) 
-					== 0) { 
-				ar[i] = 0; 
-			} 
-			else { 
-
-				// codeword[i] = dataword[j] 
-				ar[i] = (int)(str.charAt(j) - '0'); 
-				j++; 
-			} 
-		} 
-		return ar; 
-	} 
+	//	static int[] generateCode(String str, int M, int r) 
+	//	{ 
+	//		int[] ar = new int[r + M + 1]; 
+	//		int j = 0; 
+	//		for (int i = 1; i < ar.length; i++) { 
+	//			if ((Math.ceil(Math.log(i) / Math.log(2)) 
+	//					- Math.floor(Math.log(i) / Math.log(2))) 
+	//					== 0) { 
+	//				ar[i] = 0; 
+	//			} 
+	//			else { 
+	//
+	//				// codeword[i] = dataword[j] 
+	//				ar[i] = (int)(str.charAt(j) - '0'); 
+	//				j++; 
+	//			} 
+	//		} 
+	//		return ar; 
+	//	} 
 
 	static char[] leeArchivo(String archivo) throws FileNotFoundException, IOException {
 		String cadena;
@@ -212,34 +224,31 @@ public class proyecto {
 
 
 			String datastream = String.valueOf(palabra_de1);
+			System.out.println();
 			System.out.println("Palabra a transmitir:"+datastream);
 			String str=convertirBinario(datastream);
 			str=str.substring(0, 8);
 			System.out.println("Longitud del binario "+str.length());
-			int M = str.length(); 
-			int r = 1;
-			//
 
-			while (Math.pow(2, r) < (M + r + 1)) { 
-				// r is number of redundant bits 
-				r++; 
-			} 
-			int[] ar = generateCode(str, M, r); //ar es el arreglo que contiene la palabra
-
-			System.out.println("Generando el codigo de hamming "); 
-			ar = calculation(ar, r); 
-			imprime(ar);
+			//Nuevo hamming
+			int [] p1=parse(str);
+			//System.out.println("El arreglo de la palabra es y tiene longitud"+p1.length);
+			//imprimearr(p1);
+			int c[] = generateCode1(p1);
+			System.out.println("Palabra con codigo hamming:");
+			imprimearr(c);
+			//Termina nuevo hamming
 
 			//Comienza a construirse el arreglo que contiene toda la palabra
 			if(contador_while==0) {
-				for(int i=0;i<palabra_completa_bin.length;i++) {
-					palabra_completa_bin[i]=0;
-				}
-				System.arraycopy(ar, 0, palabra_completa_bin, 0, 12);
+				//				for(int i=0;i<palabra_completa_bin.length;i++) {
+				//					palabra_completa_bin[i]=0;
+				//				}
+				System.arraycopy(c, 0, palabra_completa_bin, 0, 12);
 				contador_while++;
 			}
 			else {
-				System.arraycopy(ar, 0, palabra_completa_bin, a=a+12, 12);
+				System.arraycopy(c, 0, palabra_completa_bin, a=a+12, 12);
 				contador_while++;
 			}
 			//Termina la construccion del arreglo de hamming
@@ -282,6 +291,19 @@ public class proyecto {
 		imprimearr(palabra_completa_bin_manchester);
 		//Termina codificacion manchester--------------------------------------------------------//
 
+		//Comienza deteccion y correccion de error en hamming  
+
+		for(int z=0;z<pos_errores.length;z++) {
+			int error = pos_errores[z];
+			System.out.println("Corrigiendo error en la posicion"+pos_errores[z]);
+			receive(palabra_completa_bin_manchester, palabra_completa_bin_manchester.length - palabra.length);
+
+		}
+
+
+
+
+		//Termina deteccion y correcion de error en hamming
 
 		//Termina mi codigo
 
@@ -298,6 +320,144 @@ public class proyecto {
 
 
 	} 
+
+	//Metodos del hamming
+
+	static int[] generateCode1(int a[]) {
+		// We will return the array 'b'.
+		int b[];
+
+		// We find the number of parity bits required:
+		int i=0, parity_count=0 ,j=0, k=0;
+		while(i < a.length) {
+			// 2^(parity bits) must equal the current position
+			// Current position is (number of bits traversed + number of parity bits + 1).
+			// +1 is needed since array indices start from 0 whereas we need to start from 1.
+
+			if(Math.pow(2,parity_count) == i+parity_count + 1) {
+				parity_count++;
+			}
+			else {
+				i++;
+			}
+		}
+
+		// Length of 'b' is length of original data (a) + number of parity bits.
+		b = new int[a.length + parity_count];
+
+		// Initialize this array with '2' to indicate an 'unset' value in parity bit locations:
+
+		for(i=1 ; i <= b.length ; i++) {
+			if(Math.pow(2, j) == i) {
+				// Found a parity bit location.
+				// Adjusting with (-1) to account for array indices starting from 0 instead of 1.
+
+				b[i-1] = 2;
+				j++;
+			}
+			else {
+				b[k+j] = a[k++];
+			}
+		}
+		for(i=0 ; i < parity_count ; i++) {
+			// Setting even parity bits at parity bit locations:
+
+			b[((int) Math.pow(2, i))-1] = getParity(b, i);
+		}
+		return b;
+	}
+
+	static int getParity(int b[], int power) {
+		int parity = 0;
+		for(int i=0 ; i < b.length ; i++) {
+			if(b[i] != 2) {
+				// If 'i' doesn't contain an unset value,
+				// We will save that index value in k, increase it by 1,
+				// Then we convert it into binary:
+
+				int k = i+1;
+				String s = Integer.toBinaryString(k);
+
+				//Nw if the bit at the 2^(power) location of the binary value of index is 1
+				//Then we need to check the value stored at that location.
+				//Checking if that value is 1 or 0, we will calculate the parity value.
+
+				int x = ((Integer.parseInt(s))/((int) Math.pow(10, power)))%10;
+				if(x == 1) {
+					if(b[i] == 1) {
+						parity = (parity+1)%2;
+					}
+				}
+			}
+		}
+		return parity;
+	}
+
+	static void receive(int a[], int parity_count) {
+		// This is the receiver code. It receives a Hamming code in array 'a'.
+		// We also require the number of parity bits added to the original data.
+		// Now it must detect the error and correct it, if any.
+
+		int power;
+		// We shall use the value stored in 'power' to find the correct bits to check for parity.
+
+		int parity[] = new int[parity_count];
+		// 'parity' array will store the values of the parity checks.
+
+		String syndrome = new String();
+		// 'syndrome' string will be used to store the integer value of error location.
+
+		for(power=0 ; power < parity_count ; power++) {
+			// We need to check the parities, the same no of times as the no of parity bits added.
+
+			for(int i=0 ; i < a.length ; i++) {
+				// Extracting the bit from 2^(power):
+
+				int k = i+1;
+				String s = Integer.toBinaryString(k);
+				int bit = ((Integer.parseInt(s))/((int) Math.pow(10, power)))%10;
+				if(bit == 1) {
+					if(a[i] == 1) {
+						parity[power] = (parity[power]+1)%2;
+					}
+				}
+			}
+			syndrome = parity[power] + syndrome;
+		}
+		// This gives us the parity check equation values.
+		// Using these values, we will now check if there is a single bit error and then correct it.
+
+		int error_location = Integer.parseInt(syndrome, 2);
+		if(error_location != 0) {
+			System.out.println("Error is at location " + error_location + ".");
+			a[error_location-1] = (a[error_location-1]+1)%2;
+			System.out.println("Corrected code is:");
+			for(int i=0 ; i < a.length ; i++) {
+				System.out.print(a[a.length-i-1]);
+			}
+			System.out.println();
+		}
+		else {
+			System.out.println("There is no error in the received data.");
+		}
+
+		// Finally, we shall extract the original data from the received (and corrected) code:
+		System.out.println("Original data sent was:");
+		power = parity_count-1;
+		for(int i=a.length ; i > 0 ; i--) {
+			if(Math.pow(2, power) != i) {
+				System.out.print(a[i-1]);
+			}
+			else {
+				power--;
+			}
+		}
+		System.out.println();
+	}
+
+	//Termina metodos 	
+
+
 
 
 
