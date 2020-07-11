@@ -194,7 +194,7 @@ public class proyecto {
 
 
 
-	// Driver code 
+
 	public static void main(String[] args) throws FileNotFoundException, IOException 
 	{ 
 		int indice_arreglo=0;
@@ -245,7 +245,7 @@ public class proyecto {
 			int c[] = codigoHamming(p1);
 
 			System.out.println("Palabra con codigo hamming:");
-			//imprimearr(c);
+			//imprimearr(c);////////////////////////////////////////////////////////////////descomentar esto
 
 			//Borrar esto*******************************************************************************************************************
 			if(contador_while==0) {
@@ -295,12 +295,12 @@ public class proyecto {
 
 		//Comienza codigo de linea------------------------------------------------------//
 		System.out.println("Codigo de linea manchester");
-		int[] palabra_completa_bin_manchester=codigo_Linea_Manchester(borrar1,codigo_linea_manchester_arr); //(palabra_completa_bin,codigo_linea_manchester_arr)
+		int[] palabra_completa_bin_manchester=codigo_Linea_Manchester(borrar1,codigo_linea_manchester_arr); //(palabra_completa_bin,codigo_linea_manchester_arr)///////////////////////////////////////regresar como estaba
 		imprimearr(palabra_completa_bin_manchester);
 		System.out.println();
 		imprimearr2(codigo_linea_manchester_arr);
 		System.out.println();
-		//Termina codigo de linea manchester------------------------------------//////////
+		//Termina codigo de linea manchester------------------------------------/
 
 		//Introducimos ruido-------------------------------------------/
 		System.out.println("Introducimos ruido");
