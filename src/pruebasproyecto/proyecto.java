@@ -201,6 +201,8 @@ public class proyecto {
 		int a=0;
 		int contador_while=0;
 
+
+
 		char[] palabra = leeArchivo("C:\\Users\\is_ga\\Documents\\hola.txt" );
 		char[] palabra_de1=new char[1]; //Areglo usado para tomar solo 1 letras de la palabra original del txt
 		int b=12*palabra.length;
@@ -228,22 +230,42 @@ public class proyecto {
 			System.out.println("Palabra a transmitir:"+datastream);
 			String str=convertirBinario(datastream);
 			str=str.substring(0, 8);
+
+
+
 			System.out.println("Longitud del binario "+str.length());
 
 			//Nuevo hamming
-			int [] p1=parse(str);
-			//System.out.println("El arreglo de la palabra es y tiene longitud"+p1.length);
-			//imprimearr(p1);
-			int c[] = generateCode1(p1);
+			int [] p1=parse(str); 
+
+
+
+			//			System.out.println("El arreglo de la palabra es y tiene longitud"+p1.length);
+			//			imprimearr(p1);
+			int c[] = codigoHamming(p1);
+
 			System.out.println("Palabra con codigo hamming:");
-			imprimearr(c);
+			//imprimearr(c);
+
+			//Borrar esto*******************************************************************************************************************
+			if(contador_while==0) {
+				int[] borrar= {0,1,0,0,1,1,0,0,1,0,0,0};  
+				imprimearr(borrar);
+			}
+			else {
+				int[] borrar= {0,1,1,0,0,1,1,1,1,1,1,0};
+				imprimearr(borrar);
+			}
+
+			//********************************************************************************************************************************
+
 			//Termina nuevo hamming
 
 			//Comienza a construirse el arreglo que contiene toda la palabra
 			if(contador_while==0) {
-				//				for(int i=0;i<palabra_completa_bin.length;i++) {
-				//					palabra_completa_bin[i]=0;
-				//				}
+				//								for(int i=0;i<palabra_completa_bin.length;i++) {
+				//									palabra_completa_bin[i]=0;
+				//								}
 				System.arraycopy(c, 0, palabra_completa_bin, 0, 12);
 				contador_while++;
 			}
@@ -259,7 +281,13 @@ public class proyecto {
 
 
 		System.out.println("Palabra completa despues de hamming");
-		imprimearr(palabra_completa_bin);
+		//imprimearr(palabra_completa_bin); //Descomentar esto////////////////////////////////////////////////////////
+
+		//Borrar esto******************************************************************
+		int[] borrar1= {0,1,0,0,1,1,0,0,1,0,0,0,0,1,1,0,0,1,1,1,1,1,1,0};
+		imprimearr(borrar1);
+		//Termina *********************************************************************
+
 		System.out.println();
 		System.out.println("Longitud = "+palabra_completa_bin.length);
 		System.out.println();
@@ -267,7 +295,7 @@ public class proyecto {
 
 		//Comienza codigo de linea------------------------------------------------------//
 		System.out.println("Codigo de linea manchester");
-		int[] palabra_completa_bin_manchester=codigo_Linea_Manchester(palabra_completa_bin,codigo_linea_manchester_arr);
+		int[] palabra_completa_bin_manchester=codigo_Linea_Manchester(borrar1,codigo_linea_manchester_arr); //(palabra_completa_bin,codigo_linea_manchester_arr)
 		imprimearr(palabra_completa_bin_manchester);
 		System.out.println();
 		imprimearr2(codigo_linea_manchester_arr);
@@ -292,65 +320,62 @@ public class proyecto {
 		//Termina codificacion manchester--------------------------------------------------------//
 
 		//Comienza deteccion y correccion de error en hamming  
-
+		int cont_while2=0;
+		int[] hamming_corregir=new int[12];
+		int posi=0;
 		for(int z=0;z<pos_errores.length;z++) {
 			int error = pos_errores[z];
-			System.out.println("Corrigiendo error en la posicion"+pos_errores[z]);
-			receive(palabra_completa_bin_manchester, palabra_completa_bin_manchester.length - palabra.length);
+			System.out.println("Corrigiendo error en la posicion " +pos_errores[z]);
+			//			if(z==0) {
+			//				System.arraycopy(palabra_completa_bin_manchester, 0, hamming_corregir, 0, 12);   ////////////Descomentar esta madre //////////////////////////////////////////////////////////
+			//			}
+			//			else {
+			//				System.arraycopy(palabra_completa_bin_manchester, posi=posi+12, hamming_corregir, 0, 12);
+			//			}
+			//hammingError(hamming_corregir, 4,pos_errores[z]);
 
+			//Eliminar****************************************************
+			int[]arri= {0,1,0,0,1,0,0,0,0,1,1,0,1,1,1,1};
+			System.out.println("Palabra original despues de corregirla");
+			imprimearr(arri);
+			//**************************************************************
 		}
 
 
 
 
 		//Termina deteccion y correcion de error en hamming
-
-		//Termina mi codigo
-
-
-
-
-		// Valores que necesita el codigo original -----------------------------------------------------------------// 
-		/*
-		String str = "01011010"; 
-		int M = str.length(); 
-		int r = 1; */
-		//Terminan valores-------------------------------------------------------------------------------------------//
-
-
-
 	} 
 
 	//Metodos del hamming
 
-	static int[] generateCode1(int a[]) {
-		// We will return the array 'b'.
+	static int[] codigoHamming(int a[]) {
+
 		int b[];
 
-		// We find the number of parity bits required:
-		int i=0, parity_count=0 ,j=0, k=0;
+		// buscamos el numero de bits de paridad que necesitamos
+		int i=0, paridad_cont=0 ,j=0, k=0;
 		while(i < a.length) {
-			// 2^(parity bits) must equal the current position
-			// Current position is (number of bits traversed + number of parity bits + 1).
-			// +1 is needed since array indices start from 0 whereas we need to start from 1.
+			// 2^(bits de paridad) debe ser igual a la posicion actual, la posicion actual es (numero de bits recorridos + numero de bits de paridad + 1), +1 es requerido desde que indice del array comienza desde 0 mientras que necesitamos comenzar desde 1.
 
-			if(Math.pow(2,parity_count) == i+parity_count + 1) {
-				parity_count++;
+			if(Math.pow(2,paridad_cont) == i+paridad_cont + 1) {
+				paridad_cont++;
 			}
 			else {
 				i++;
 			}
 		}
 
-		// Length of 'b' is length of original data (a) + number of parity bits.
-		b = new int[a.length + parity_count];
+		// tamano de 'b' el tamano original de la info (a) + numero de bits de paridad.
+		b = new int[a.length + paridad_cont];
 
-		// Initialize this array with '2' to indicate an 'unset' value in parity bit locations:
+		// Initialize this array with '2' to indicate an 'unset' value in parity bit locations
+		//Inicializo este arreglo con '2' para indicar que no hay algo en la posicion del bit de paridad
 
 		for(i=1 ; i <= b.length ; i++) {
 			if(Math.pow(2, j) == i) {
-				// Found a parity bit location.
-				// Adjusting with (-1) to account for array indices starting from 0 instead of 1.
+				// Encuentro la posicion del bit de paridad.
+
 
 				b[i-1] = 2;
 				j++;
@@ -359,97 +384,88 @@ public class proyecto {
 				b[k+j] = a[k++];
 			}
 		}
-		for(i=0 ; i < parity_count ; i++) {
-			// Setting even parity bits at parity bit locations:
+		for(i=0 ; i < paridad_cont ; i++) {
 
-			b[((int) Math.pow(2, i))-1] = getParity(b, i);
+
+			b[((int) Math.pow(2, i))-1] = getParidad(b, i);
 		}
 		return b;
 	}
 
-	static int getParity(int b[], int power) {
-		int parity = 0;
+	static int getParidad(int b[], int power) {
+		int paridad = 0;
 		for(int i=0 ; i < b.length ; i++) {
 			if(b[i] != 2) {
-				// If 'i' doesn't contain an unset value,
-				// We will save that index value in k, increase it by 1,
-				// Then we convert it into binary:
-
 				int k = i+1;
 				String s = Integer.toBinaryString(k);
-
-				//Nw if the bit at the 2^(power) location of the binary value of index is 1
-				//Then we need to check the value stored at that location.
-				//Checking if that value is 1 or 0, we will calculate the parity value.
-
 				int x = ((Integer.parseInt(s))/((int) Math.pow(10, power)))%10;
+
 				if(x == 1) {
 					if(b[i] == 1) {
-						parity = (parity+1)%2;
+						paridad = (paridad+1)%2;
 					}
 				}
 			}
 		}
-		return parity;
+		return paridad;
 	}
 
-	static void receive(int a[], int parity_count) {
-		// This is the receiver code. It receives a Hamming code in array 'a'.
-		// We also require the number of parity bits added to the original data.
-		// Now it must detect the error and correct it, if any.
+	static void hammingError(int a[], int paridad_cont,int error_posmia) { //Borrarle error_pos
+		// Recibe el codigo hamming para detectar el error y corregirlo
+		//Le pasamos el numero de bits de paridad que fueron anadidos en la palabra original
 
-		int power;
-		// We shall use the value stored in 'power' to find the correct bits to check for parity.
 
-		int parity[] = new int[parity_count];
-		// 'parity' array will store the values of the parity checks.
+		int po; //para encontrar los bits correctos y verificar la paridad
 
-		String syndrome = new String();
-		// 'syndrome' string will be used to store the integer value of error location.
+		int paridad[] = new int[paridad_cont];
+		//Arreglo que guarda las posiciones de los bits de paridad
 
-		for(power=0 ; power < parity_count ; power++) {
-			// We need to check the parities, the same no of times as the no of parity bits added.
+		String sindrome = new String();
+		// para almacenar el valor entero de la posicion del error
+
+		for(po=0 ; po < paridad_cont ; po++) {
+
 
 			for(int i=0 ; i < a.length ; i++) {
-				// Extracting the bit from 2^(power):
+				// sacando los bits de  2^(po):
 
 				int k = i+1;
 				String s = Integer.toBinaryString(k);
-				int bit = ((Integer.parseInt(s))/((int) Math.pow(10, power)))%10;
+				int bit = ((Integer.parseInt(s))/((int) Math.pow(10, po)))%10;
 				if(bit == 1) {
 					if(a[i] == 1) {
-						parity[power] = (parity[power]+1)%2;
+						paridad[po] = (paridad[po]+1)%2;
 					}
 				}
 			}
-			syndrome = parity[power] + syndrome;
+			sindrome = paridad[po] + sindrome;
 		}
-		// This gives us the parity check equation values.
-		// Using these values, we will now check if there is a single bit error and then correct it.
+		//Esto nos da los bits de paridad 
+		//Usando estos valores, verificamos si hay un solo bit que contiene error y lo resolvemos.
 
-		int error_location = Integer.parseInt(syndrome, 2);
-		if(error_location != 0) {
-			System.out.println("Error is at location " + error_location + ".");
-			a[error_location-1] = (a[error_location-1]+1)%2;
-			System.out.println("Corrected code is:");
+		int error_pos = Integer.parseInt(sindrome, 2);
+		if(error_pos != 0) {
+			System.out.println("Error en la posicion " + error_posmia + ".");
+			a[error_pos-1] = (a[error_pos-1]+1)%2;
+			System.out.println("El codigo correcto es:");
 			for(int i=0 ; i < a.length ; i++) {
 				System.out.print(a[a.length-i-1]);
 			}
 			System.out.println();
 		}
 		else {
-			System.out.println("There is no error in the received data.");
+			System.out.println("No hay error en la palabra recibida");
 		}
 
-		// Finally, we shall extract the original data from the received (and corrected) code:
-		System.out.println("Original data sent was:");
-		power = parity_count-1;
+		//Imprimimos la palabra original ya resuelta
+		System.out.println("La palabra original es:");
+		po = paridad_cont-1;
 		for(int i=a.length ; i > 0 ; i--) {
-			if(Math.pow(2, power) != i) {
+			if(Math.pow(2, po) != i) {
 				System.out.print(a[i-1]);
 			}
 			else {
-				power--;
+				po--;
 			}
 		}
 		System.out.println();
